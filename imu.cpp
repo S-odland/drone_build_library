@@ -50,7 +50,7 @@ void IMU_device::led_setup(void){
     pinMode(LED_9,OUTPUT);
     pinMode(LED_10,OUTPUT);
 
-	set_leds(HIGH);
+	set_leds(0);
 
 }
 
@@ -66,6 +66,14 @@ void IMU_device::set_leds(int status){
 	digitalWrite(LED_8, status);
 	digitalWrite(LED_9, status);
 	digitalWrite(LED_10,status);
+
+}
+
+void IMU_device::reset_tilt_loc(signed short tilt_loc[10]){
+
+	for(int i = 0; i < 10; i++){
+		*(tilt_loc + i) = 0;
+	}
 
 }
 
@@ -105,7 +113,7 @@ void IMU_device::scale_data(signed short *data){
  *
  */
 
-void IMU_device::detect_tilt_loc(signed short accel_data[3]){
+void IMU_device::detect_tilt_loc(signed short accel_data[3], signed short tilt_loc[10]){
 
 	signed short x = *(accel_data);
 	signed short y = *(accel_data+1);
@@ -118,56 +126,56 @@ void IMU_device::detect_tilt_loc(signed short accel_data[3]){
 	if (x > 0 && y > 0) {
 
 		if (mag_y > mag_x) {
-			set_leds(0);
-			digitalWrite(LED_4,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc+3) = 1;
 		} else {
-			set_leds(0);
-			digitalWrite(LED_5,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc+4) = 1;
 		}
 
 	} else if (x < 0 && y > 0) {
 
 		if (mag_y > mag_x) {
-			set_leds(0);
-			digitalWrite(LED_2,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc+1) = 1;
 		} else {
-			set_leds(0);
-			digitalWrite(LED_1,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc) = 1;
 		}
 
 	} else if (x < 0 && y < 0) {
 
 		if (mag_y > mag_x) {
-			set_leds(0);
-			digitalWrite(LED_9,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc+8) = 1;
 		} else {
-			set_leds(0);
-			digitalWrite(LED_10,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc+9) = 1;
 		}
 
 	} else if (x > 0 && y < 0) {
 
 		if (mag_y > mag_x) {
-			set_leds(0);
-			digitalWrite(LED_7,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc+6) = 1;
 		} else {
-			set_leds(0);
-			digitalWrite(LED_6,1);
+			reset_tilt_loc(tilt_loc);
+			*(tilt_loc+5) = 1;
 		}
 
 	} else if (x == 0 && y > 0) {
 
-		set_leds(0);
-		digitalWrite(LED_3,1);
+		reset_tilt_loc(tilt_loc);
+		*(tilt_loc+2) = 1;
 
 	} else if ( x == 0 && y < 0) {
 
-		set_leds(0);
-		digitalWrite(LED_8,1);
+		reset_tilt_loc(tilt_loc);
+		*(tilt_loc+7) = 1;
 
 	} else {
 
-		set_leds(0);
+		reset_tilt_loc(tilt_loc);
 
 	}
 

@@ -40,7 +40,8 @@ public:
     void set_leds(int status);
     void read_data(signed short *data_rd,uint8_t reg);
     void scale_data(signed short *data);
-    void detect_tilt_loc(signed short accel_data[3]);
+    void detect_tilt_loc(signed short accel_data[3], signed short tilt_loc[10]);
+    void reset_tilt_loc(signed short tilt_loc[10]);
 protected: 
     I2C_device *i2c_device = NULL;
 };
