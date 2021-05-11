@@ -99,7 +99,7 @@ void IMU_device::scale_data(signed short *data){
     // int accel_scale = 0.061;
     // int accel_gravity = 9.801;
 
-    // *data = accel_scale * (*data) * accel_gravity / 1000;
+    // *data = accel_scale * (*dat a) * accel_gravity / 1000;
     *data = 16 * (*data) / 16383;
 }
 
