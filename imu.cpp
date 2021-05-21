@@ -37,47 +37,7 @@ void IMU_device::begin_I2C(uint8_t addr, TwoWire *wire){
 
 }
 
-void IMU_device::led_setup(void){
-
-    pinMode(LED_1,OUTPUT);
-    pinMode(LED_2,OUTPUT);
-    pinMode(LED_3,OUTPUT);
-    pinMode(LED_4,OUTPUT);
-    pinMode(LED_5,OUTPUT);
-    pinMode(LED_6,OUTPUT);
-    pinMode(LED_7,OUTPUT);
-    pinMode(LED_8,OUTPUT);
-    pinMode(LED_9,OUTPUT);
-    pinMode(LED_10,OUTPUT);
-
-	set_leds(0);
-
-}
-
-void IMU_device::set_leds(int status){
-
-    digitalWrite(LED_1, status);
-	digitalWrite(LED_2, status);
-	digitalWrite(LED_3, status);
-	digitalWrite(LED_4, status);
-	digitalWrite(LED_5, status);
-	digitalWrite(LED_6, status);
-	digitalWrite(LED_7, status);
-	digitalWrite(LED_8, status);
-	digitalWrite(LED_9, status);
-	digitalWrite(LED_10,status);
-
-}
-
-void IMU_device::reset_tilt_loc(signed short tilt_loc[10]){
-
-	for(int i = 0; i < 10; i++){
-		*(tilt_loc + i) = 0;
-	}
-
-}
-
-void IMU_device::read_data(signed short *data_rd,uint8_t reg){
+void IMU_device::read_data(float *data_rd,uint8_t reg){
 
     unsigned char data1;
 	unsigned char data2;
@@ -85,23 +45,71 @@ void IMU_device::read_data(signed short *data_rd,uint8_t reg){
 	i2c_device->read(&data1,reg);
 	i2c_device->read(&data2,reg + 0x01);
 
-	*data_rd = (data2 << 8) | data1;
-
-	scale_data(data_rd);
+	*data_rd = (data2 << 8) | data1;	
 
 }
 
-void IMU_device::scale_data(signed short *data){
+// void IMU_device::read_accel_data(float *acc_x,float *acc_y, float *acc_z){
 
-    // int gyro_scale = 8.75;
-    // int dps_to_rads = 0.0175;
+// 	read_data((accel_data+0),IMU_OUTX_L_XL);
+// 	read_data((accel_data+1),IMU_OUTY_L_XL);
+// 	read_data((accel_data+2),IMU_OUTZ_L_XL);
 
-    // int accel_scale = 0.061;
-    // int accel_gravity = 9.801;
+// }
 
-    // *data = accel_scale * (*dat a) * accel_gravity / 1000;
-    *data = 16 * (*data) / 16383;
-}
+// void IMU_device::read_gyro_data(float *gyr_x, float *gyr_y,float *gyr_z){
+
+// 	read_data((gyro_data+0),IMU_OUTX_L_G);
+// 	read_data((gyro_data+1),IMU_OUTY_L_G);
+// 	read_data((gyro_data+2),IMU_OUTZ_L_G);
+
+// }
+
+// void IMU_device::get_imu_data(float *acc_x,float *acc_y, float *acc_z, float *gyr_x, float *gyr_y,float *gyr_z) {
+	
+// 	read_gyro_data(float *gyr_x, float *gyr_y,float *gyr_z);
+// 	read_accel_data(float *acc_x,float *acc_y, float *acc_z);
+// }
+
+// void IMU_device::imu_filter(float accel_data[3], float gyro_data[3], float *accel_mag, float *pitch_accel, float *roll_accel, float *yaw_mag, float filter_accel_data[3], float filter_gyro_data[3]) {
+
+// 	*(filter_accel_data) = *(filter_accel_data) + 0.1*(*(accel_data) - *(filter_accel_data));
+// 	*(filter_accel_data+1) = *(filter_accel_data+1) + 0.1*(*(accel_data+1) - *(filter_accel_data+1));
+// 	*(filter_accel_data+2) = *(filter_accel_data+2) + 0.1*(*(accel_data+2) - *(filter_accel_data+2));
+	
+// 	*(filter_gyro_data) += *(gyro_data) * DeltaT;
+// 	*(filter_gyro_data+1) += *(gyro_data+1) * DeltaT;
+// 	*(filter_gyro_data+2) += *(gyro_data+2) * DeltaT;
+
+// 	*accel_mag = fabs(*(filter_accel_data)) + fabs(*(filter_accel_data+1)) + fabs(*(filter_accel_data+2));
+	
+// 	if (fabs(*accel_mag - 1) < 0.2) {
+
+// 		*pitch_accel = (180/M_PI) * atan2(- *(filter_accel_data+1), *(filter_accel_data+2));
+// 		*roll_accel = (180/M_PI) * atan2( *(filter_accel_data), sqrt( (*(filter_accel_data+1) * *(filter_accel_data+1)) +  (*(filter_accel_data+2) * *(filter_accel_data+2))));
+
+// 		*(filter_gyro_data) = 0.99* *(filter_gyro_data) + 0.01 * *pitch_accel;
+// 		*(filter_gyro_data+1) = 0.99* *(filter_gyro_data) + 0.01 * *roll_accel;
+
+// 	}
+
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*          LED LOCATIONS
  *
@@ -113,70 +121,70 @@ void IMU_device::scale_data(signed short *data){
  *
  */
 
-void IMU_device::detect_tilt_loc(signed short accel_data[3], signed short tilt_loc[10]){
+// void IMU_device::detect_tilt_loc(double accel_data[3], double tilt_loc[10]){
 
-	signed short x = *(accel_data);
-	signed short y = *(accel_data+1);
-	//signed short z = *(accel_data+2);
+// 	double x = *(accel_data);
+// 	double y = *(accel_data+1);
+// 	//signed short z = *(accel_data+2);
 
-	float mag = abs(x) + abs(y);
-	float mag_x = abs(x)/mag;
-	float mag_y = abs(y)/mag;
+// 	float mag = abs(x) + abs(y);
+// 	float mag_x = abs(x)/mag;
+// 	float mag_y = abs(y)/mag;
 
-	if (x > 0 && y > 0) {
+// 	if (x > 0 && y > 0) {
 
-		if (mag_y > mag_x) {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc+3) = 1;
-		} else {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc+4) = 1;
-		}
+// 		if (mag_y > mag_x) {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc+3) = 1;
+// 		} else {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc+4) = 1;
+// 		}
 
-	} else if (x < 0 && y > 0) {
+// 	} else if (x < 0 && y > 0) {
 
-		if (mag_y > mag_x) {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc+1) = 1;
-		} else {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc) = 1;
-		}
+// 		if (mag_y > mag_x) {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc+1) = 1;
+// 		} else {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc) = 1;
+// 		}
 
-	} else if (x < 0 && y < 0) {
+// 	} else if (x < 0 && y < 0) {
 
-		if (mag_y > mag_x) {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc+8) = 1;
-		} else {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc+9) = 1;
-		}
+// 		if (mag_y > mag_x) {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc+8) = 1;
+// 		} else {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc+9) = 1;
+// 		}
 
-	} else if (x > 0 && y < 0) {
+// 	} else if (x > 0 && y < 0) {
 
-		if (mag_y > mag_x) {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc+6) = 1;
-		} else {
-			reset_tilt_loc(tilt_loc);
-			*(tilt_loc+5) = 1;
-		}
+// 		if (mag_y > mag_x) {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc+6) = 1;
+// 		} else {
+// 			reset_tilt_loc(tilt_loc);
+// 			*(tilt_loc+5) = 1;
+// 		}
 
-	} else if (x == 0 && y > 0) {
+// 	} else if (x == 0 && y > 0) {
 
-		reset_tilt_loc(tilt_loc);
-		*(tilt_loc+2) = 1;
+// 		reset_tilt_loc(tilt_loc);
+// 		*(tilt_loc+2) = 1;
 
-	} else if ( x == 0 && y < 0) {
+// 	} else if ( x == 0 && y < 0) {
 
-		reset_tilt_loc(tilt_loc);
-		*(tilt_loc+7) = 1;
+// 		reset_tilt_loc(tilt_loc);
+// 		*(tilt_loc+7) = 1;
 
-	} else {
+// 	} else {
 
-		reset_tilt_loc(tilt_loc);
+// 		reset_tilt_loc(tilt_loc);
 
-	}
+// 	}
 
-}
+// }
