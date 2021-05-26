@@ -29,7 +29,7 @@ public:
 
     IMU_device();
     void begin_I2C(uint8_t addr, TwoWire *wire = &Wire);
-    void read_data(float *data_rd,uint8_t reg);
+    void read_data(signed short *data_rd,uint8_t reg);
     //void get_imu_data(float acc_x,float acc_y, float acc_z, float gyr_x, float gyr_y,float gyr_z);
 
     // void imu_filter(float accel_data[3], 

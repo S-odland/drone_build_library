@@ -37,7 +37,7 @@ void IMU_device::begin_I2C(uint8_t addr, TwoWire *wire){
 
 }
 
-void IMU_device::read_data(float *data_rd,uint8_t reg){
+void IMU_device::read_data(signed short *data_rd,uint8_t reg){
 
     unsigned char data1;
 	unsigned char data2;
